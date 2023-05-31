@@ -8,8 +8,11 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
 
     float _Blend;
+    float _RayDepthBias;
     float _RayMaxDistance;
     float _ReflectionAdditionalRate;
+    float _ReflectionRayThickness;
+    
     float4x4 _ViewMatrix;
     float4x4 _ViewProjectionMatrix;
     float4x4 _ProjectionMatrix;
@@ -189,14 +192,14 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         // float3 worldNormal = mul((float3x3)_InverseViewMatrix, viewNormal);
         // return float4(worldNormal, 1.);
 
-        // float3 incidentViewDir = normalize(viewPosition);
-        // float3 reflectViewDir = reflect(incidentViewDir, viewNormal);
-        // float3 rayViewDir = reflectViewDir;
+        float3 incidentViewDir = normalize(viewPosition);
+        float3 reflectViewDir = reflect(incidentViewDir, viewNormal);
+        float3 rayViewDir = reflectViewDir;
         float3 incidentWorldDir = normalize(worldPosition - _WorldSpaceCameraPos);
         float3 reflectWorldDir = reflect(incidentWorldDir, worldNormal);
         float3 rayWorldDir = reflectWorldDir;
 
-        // float3 rayViewOrigin = viewPosition;
+        float3 rayViewOrigin = viewPosition;
         float3 rayWorldOrigin = worldPosition;
 
         float cameraNearClip = _ProjectionParams.y;
@@ -205,25 +208,25 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float maxRayDistance = _RayMaxDistance;
         float rayLength = maxRayDistance;
 
-        // float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
+        float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
         float3 rayWorldEnd = rayWorldOrigin + rayWorldDir * rayLength;
 
-        float rayIterationNum = 10.;
-        int maxIterationNum = 10;
+        float rayIterationNum = 64.;
+        int maxIterationNum = 64;
         float rayDeltaStep = maxRayDistance / rayIterationNum;
 
-        int binarySearchNum = 64;
+        int binarySearchNum = 1;
 
         float eps = .0001;
 
-        // float3 currentRayInView = rayViewOrigin;
+        float3 currentRayInView = rayViewOrigin;
         float3 currentRayInWorld = rayWorldOrigin;
 
         bool isHit = false;
 
         for (int j = 0; j < maxIterationNum; j++)
         {
-            // currentRayInView += rayViewDir * rayDeltaStep;
+            currentRayInView += rayViewDir * rayDeltaStep;
             currentRayInWorld += rayWorldDir * rayDeltaStep;
 
             // 1. view
@@ -234,9 +237,12 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             float3 sampledWorldPosition = mul(_InverseViewMatrix, float4(sampledViewPosition, 1.)).xyz;
 
             // 1. view
-            // if (sampledViewPosition.z < currentRayInView.z)
+            float dist = sampledViewPosition.z - currentRayInView.z;
+            if (dist > _RayDepthBias && dist < _ReflectionRayThickness)
             // 2. world
-            if (sampledWorldPosition.z < currentRayInWorld.z)
+            // float dist = currentRayInWorld.z - sampledWorldPosition.z;
+            // if(dist > eps && dist < _ReflectionRayThickness)
+            // if (sampledWorldPosition.z < currentRayInWorld.z)
             {
                 // float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
                 float4 currentRayInClip = mul(_ViewProjectionMatrix, float4(currentRayInWorld, 1.));
@@ -244,7 +250,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 #if UNITY_UV_STARTS_AT_TOP
                 rayUV.y = 1. - rayUV.y;
                 #endif
-                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+                baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
                 isHit = true;
                 break;
             }
@@ -270,6 +276,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         // return float4(viewPosition, 1.);
         // return float4(rayViewOrigin.xy, 1, 1);
         // return float4(-rayViewOrigin.z, 0, 0, 1);
+
+        // return float4(-viewPosition.z * .05, 0, 0, 1.);
 
         return lerp(cachedBaseColor, baseColor, _Blend);
 

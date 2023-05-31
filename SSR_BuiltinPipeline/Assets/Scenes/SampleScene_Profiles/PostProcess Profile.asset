@@ -19,12 +19,18 @@ MonoBehaviour:
   Blend:
     overrideState: 1
     value: 1
+  RayDepthBias:
+    overrideState: 1
+    value: 0.0138
   RayMaxDistance:
     overrideState: 1
     value: 1.1
   ReflectionAdditionalRate:
     overrideState: 1
     value: 0.31
+  ReflectionRayThickness:
+    overrideState: 1
+    value: 6.07
   OcclusionSampleLength:
     overrideState: 1
     value: 1
