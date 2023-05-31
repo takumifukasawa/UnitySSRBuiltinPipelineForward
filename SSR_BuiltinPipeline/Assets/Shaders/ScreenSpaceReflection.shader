@@ -158,7 +158,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         return samplingRawDepth;
     }
 
-    
+
     // ------------------------------------------------------------------------------------------------
 
     float4 Frag(VaryingsDefault i) : SV_Target
@@ -208,14 +208,18 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         // float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
         float3 rayWorldEnd = rayWorldOrigin + rayWorldDir * rayLength;
 
-        float rayIterationNum = 64.;
-        int maxIterationNum = 64;
+        float rayIterationNum = 10.;
+        int maxIterationNum = 10;
         float rayDeltaStep = maxRayDistance / rayIterationNum;
+
+        int binarySearchNum = 64;
 
         float eps = .0001;
 
         // float3 currentRayInView = rayViewOrigin;
         float3 currentRayInWorld = rayWorldOrigin;
+
+        bool isHit = false;
 
         for (int j = 0; j < maxIterationNum; j++)
         {
@@ -240,8 +244,18 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 #if UNITY_UV_STARTS_AT_TOP
                 rayUV.y = 1. - rayUV.y;
                 #endif
-                baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+                isHit = true;
                 break;
+            }
+        }
+
+        if (isHit)
+        {
+            float halfStep = rayDeltaStep * 0.5;
+            for (int j = 0; j < binarySearchNum; j++)
+            {
+                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
             }
         }
 
