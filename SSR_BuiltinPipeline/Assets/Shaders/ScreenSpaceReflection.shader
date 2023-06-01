@@ -12,7 +12,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     float _RayMaxDistance;
     float _ReflectionAdditionalRate;
     float _ReflectionRayThickness;
-    
+
     float4x4 _ViewMatrix;
     float4x4 _ViewProjectionMatrix;
     float4x4 _ProjectionMatrix;
@@ -166,6 +166,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
     float4 Frag(VaryingsDefault i) : SV_Target
     {
+        float eps = .0001;
+
         float4 color = float4(1, 1, 1, 1);
 
         float4 baseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
@@ -181,6 +183,12 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float3 viewNormal = float3(0, 0, 0);
         float4 cdn = SAMPLE_TEXTURE2D(_CameraDepthNormalsTexture, sampler_CameraDepthNormalsTexture, i.texcoord);
         DecodeDepthNormal(cdn, depth, viewNormal);
+
+        if (depth > 1. - eps)
+        {
+            return baseColor;
+        }
+
         float rawDepth = InverseLinear01Depth(depth);
 
         float3 viewPosition = ReconstructViewPositionFromDepth(i.texcoord, rawDepth);
@@ -211,13 +219,11 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
         float3 rayWorldEnd = rayWorldOrigin + rayWorldDir * rayLength;
 
-        float rayIterationNum = 64.;
-        int maxIterationNum = 64;
+        float rayIterationNum = 20.;
+        int maxIterationNum = 20;
         float rayDeltaStep = maxRayDistance / rayIterationNum;
 
-        int binarySearchNum = 1;
-
-        float eps = .0001;
+        int binarySearchNum = 20;
 
         float3 currentRayInView = rayViewOrigin;
         float3 currentRayInWorld = rayWorldOrigin;
@@ -250,7 +256,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 #if UNITY_UV_STARTS_AT_TOP
                 rayUV.y = 1. - rayUV.y;
                 #endif
-                baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
                 isHit = true;
                 break;
             }
@@ -258,11 +264,38 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
         if (isHit)
         {
-            float halfStep = rayDeltaStep * 0.5;
+            float halfStep = rayDeltaStep;
+            float stepSign = -1;
             for (int j = 0; j < binarySearchNum; j++)
             {
-                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+                halfStep *= 0.5 * stepSign;
+                float binaryStep = halfStep / (float)binarySearchNum;
+                currentRayInView += halfStep;
+
+                // 1. view
+                // float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
+                // 2. world
+                float sampledRawDepth = SampleRawDepthByWorldPosition(currentRayInWorld, float3(0, 0, 0));
+                float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
+
+                float dist = sampledViewPosition.z - currentRayInView.z;
+                if (dist > _RayDepthBias && dist < _ReflectionRayThickness)
+                // if (dist > _RayDepthBias)
+                {
+                    stepSign = -1;
+                } else
+                {
+                    stepSign = 1;
+                }
             }
+
+            // float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
+            float4 currentRayInClip = mul(_ViewProjectionMatrix, float4(currentRayInWorld, 1.));
+            float2 rayUV = (currentRayInClip.xy / currentRayInClip.w) * 0.5 + 0.5;
+            #if UNITY_UV_STARTS_AT_TOP
+            rayUV.y = 1. - rayUV.y;
+            #endif
+            baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
         }
 
         // mask exists depth
