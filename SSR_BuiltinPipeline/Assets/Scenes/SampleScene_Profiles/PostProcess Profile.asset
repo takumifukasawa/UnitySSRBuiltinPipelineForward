@@ -21,37 +21,16 @@ MonoBehaviour:
     value: 1
   RayDepthBias:
     overrideState: 1
-    value: 0.0138
+    value: 0.01
   RayMaxDistance:
     overrideState: 1
     value: 0.5
   ReflectionAdditionalRate:
     overrideState: 1
-    value: 0.299
+    value: 0.53
   ReflectionRayThickness:
     overrideState: 1
-    value: 5.97
-  OcclusionSampleLength:
-    overrideState: 1
-    value: 1
-  OcclusionMinDistance:
-    overrideState: 1
-    value: 0
-  OcclusionMaxDistance:
-    overrideState: 1
-    value: 5
-  OcclusionBias:
-    overrideState: 1
-    value: 0.001
-  OcclusionStrength:
-    overrideState: 1
-    value: 1
-  OcclusionPower:
-    overrideState: 1
-    value: 1
-  OcclusionColor:
-    overrideState: 1
-    value: {r: 0, g: 0, b: 0, a: 1}
+    value: 7.9
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

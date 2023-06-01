@@ -192,10 +192,10 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float rawDepth = InverseLinear01Depth(depth);
 
         float3 viewPosition = ReconstructViewPositionFromDepth(i.texcoord, rawDepth);
-        float4 worldPosition = mul(_InverseViewMatrix, float4(viewPosition, 1.));
+        // float4 worldPosition = mul(_InverseViewMatrix, float4(viewPosition, 1.));
 
-        float4x4 viewTranspose = transpose(_ViewMatrix);
-        float3 worldNormal = mul(viewTranspose, float4(viewNormal, 1.)).xyz;
+        // float4x4 viewTranspose = transpose(_ViewMatrix);
+        // float3 worldNormal = mul(viewTranspose, float4(viewNormal, 1.)).xyz;
         // test calc world normal
         // float3 worldNormal = mul((float3x3)_InverseViewMatrix, viewNormal);
         // return float4(worldNormal, 1.);
@@ -203,44 +203,44 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float3 incidentViewDir = normalize(viewPosition);
         float3 reflectViewDir = reflect(incidentViewDir, viewNormal);
         float3 rayViewDir = reflectViewDir;
-        float3 incidentWorldDir = normalize(worldPosition - _WorldSpaceCameraPos);
-        float3 reflectWorldDir = reflect(incidentWorldDir, worldNormal);
-        float3 rayWorldDir = reflectWorldDir;
+        // float3 incidentWorldDir = normalize(worldPosition - _WorldSpaceCameraPos);
+        // float3 reflectWorldDir = reflect(incidentWorldDir, worldNormal);
+        // float3 rayWorldDir = reflectWorldDir;
 
         float3 rayViewOrigin = viewPosition;
-        float3 rayWorldOrigin = worldPosition;
+        // float3 rayWorldOrigin = worldPosition;
 
-        float cameraNearClip = _ProjectionParams.y;
-        float cameraFarClip = _ProjectionParams.y;
+        // float cameraNearClip = _ProjectionParams.y;
+        // float cameraFarClip = _ProjectionParams.y;
 
         float maxRayDistance = _RayMaxDistance;
         float rayLength = maxRayDistance;
 
-        float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
-        float3 rayWorldEnd = rayWorldOrigin + rayWorldDir * rayLength;
+        // float3 rayViewEnd = rayViewOrigin + rayViewDir * rayLength;
+        // float3 rayWorldEnd = rayWorldOrigin + rayWorldDir * rayLength;
 
         float rayIterationNum = 20.;
         int maxIterationNum = 20;
         float rayDeltaStep = maxRayDistance / rayIterationNum;
 
-        int binarySearchNum = 20;
+        int binarySearchNum = 40;
 
         float3 currentRayInView = rayViewOrigin;
-        float3 currentRayInWorld = rayWorldOrigin;
+        // float3 currentRayInWorld = rayWorldOrigin;
 
         bool isHit = false;
 
         for (int j = 0; j < maxIterationNum; j++)
         {
             currentRayInView += rayViewDir * rayDeltaStep;
-            currentRayInWorld += rayWorldDir * rayDeltaStep;
+            // currentRayInWorld += rayWorldDir * rayDeltaStep;
 
             // 1. view
-            // float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
+            float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
             // 2. world
-            float sampledRawDepth = SampleRawDepthByWorldPosition(currentRayInWorld, float3(0, 0, 0));
+            // float sampledRawDepth = SampleRawDepthByWorldPosition(currentRayInWorld, float3(0, 0, 0));
             float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
-            float3 sampledWorldPosition = mul(_InverseViewMatrix, float4(sampledViewPosition, 1.)).xyz;
+            // float3 sampledWorldPosition = mul(_InverseViewMatrix, float4(sampledViewPosition, 1.)).xyz;
 
             // 1. view
             float dist = sampledViewPosition.z - currentRayInView.z;
@@ -250,13 +250,6 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             // if(dist > eps && dist < _ReflectionRayThickness)
             // if (sampledWorldPosition.z < currentRayInWorld.z)
             {
-                // float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
-                float4 currentRayInClip = mul(_ViewProjectionMatrix, float4(currentRayInWorld, 1.));
-                float2 rayUV = (currentRayInClip.xy / currentRayInClip.w) * 0.5 + 0.5;
-                #if UNITY_UV_STARTS_AT_TOP
-                rayUV.y = 1. - rayUV.y;
-                #endif
-                // baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
                 isHit = true;
                 break;
             }
@@ -273,9 +266,9 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 currentRayInView += halfStep;
 
                 // 1. view
-                // float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
+                float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
                 // 2. world
-                float sampledRawDepth = SampleRawDepthByWorldPosition(currentRayInWorld, float3(0, 0, 0));
+                // float sampledRawDepth = SampleRawDepthByWorldPosition(currentRayInWorld, float3(0, 0, 0));
                 float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
 
                 float dist = sampledViewPosition.z - currentRayInView.z;
@@ -289,8 +282,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 }
             }
 
-            // float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
-            float4 currentRayInClip = mul(_ViewProjectionMatrix, float4(currentRayInWorld, 1.));
+            float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
+            // float4 currentRayInClip = mul(_ViewProjectionMatrix, float4(currentRayInWorld, 1.));
             float2 rayUV = (currentRayInClip.xy / currentRayInClip.w) * 0.5 + 0.5;
             #if UNITY_UV_STARTS_AT_TOP
             rayUV.y = 1. - rayUV.y;
