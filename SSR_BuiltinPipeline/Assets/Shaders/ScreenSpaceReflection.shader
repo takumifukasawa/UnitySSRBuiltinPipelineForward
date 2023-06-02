@@ -4,8 +4,9 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
 
     TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
+    // depth texture を使う場合
+    // TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
     TEXTURE2D_SAMPLER2D(_CameraDepthNormalsTexture, sampler_CameraDepthNormalsTexture);
-    TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
 
     float _Blend;
     float _RayDepthBias;
@@ -43,7 +44,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     {
         return frac(sin(dot(seed, float2(12.9898, 78.233))) * 43758.5453);
     }
-    
+
     float3 ReconstructWorldPositionFromDepth(float2 screenUV, float rawDepth)
     {
         // TODO: depthはgraphicsAPIを考慮している必要があるはず
@@ -66,17 +67,6 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         return viewPos.xyz / viewPos.w;
     }
 
-    float SampleRawDepth(float2 uv)
-    {
-        float rawDepth = SAMPLE_DEPTH_TEXTURE_LOD(
-            _CameraDepthTexture,
-            sampler_CameraDepthTexture,
-            UnityStereoTransformScreenSpaceTex(uv),
-            0
-        );
-        return rawDepth;
-    }
-
     float InverseLinear01Depth(float d)
     {
         // Linear01Depth
@@ -89,6 +79,24 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         // z = (1.0 - _ZBufferParams.y * d) / (_ZBufferParams.x * d);
 
         return (1 - _ZBufferParams.y * d) / (_ZBufferParams.x * d);
+    }
+
+    float SampleRawDepth(float2 uv)
+    {
+        // 1. use depth texture
+        // float rawDepth = SAMPLE_DEPTH_TEXTURE_LOD(
+        //     _CameraDepthTexture,
+        //     sampler_CameraDepthTexture,
+        //     UnityStereoTransformScreenSpaceTex(uv),
+        //     0
+        // );
+
+        // 2. use depth normal texture
+        float4 cdn = SAMPLE_TEXTURE2D(_CameraDepthNormalsTexture, sampler_CameraDepthNormalsTexture, uv);
+        float depth = DecodeFloatRG(cdn.zw);
+        float rawDepth = InverseLinear01Depth(depth);
+
+        return rawDepth;
     }
 
     float SampleRawDepthByViewPosition(float3 viewPosition, float3 offset)
