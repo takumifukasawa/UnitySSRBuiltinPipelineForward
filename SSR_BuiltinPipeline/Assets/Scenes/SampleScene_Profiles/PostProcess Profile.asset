@@ -24,16 +24,22 @@ MonoBehaviour:
     value: 0.0144
   RayMaxDistance:
     overrideState: 1
-    value: 1.6
+    value: 0.7
   ReflectionAdditionalRate:
     overrideState: 1
-    value: 0.432
+    value: 0.746
   ReflectionRayThickness:
     overrideState: 1
     value: 6.4
   ReflectionRayJitterSize:
     overrideState: 1
-    value: 2.08
+    value: 0.21
+  ReflectionFadeMinDistance:
+    overrideState: 1
+    value: 0
+  ReflectionFadeMaxDistance:
+    overrideState: 1
+    value: 1.85
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

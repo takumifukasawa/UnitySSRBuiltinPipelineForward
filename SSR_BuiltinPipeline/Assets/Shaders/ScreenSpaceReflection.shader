@@ -14,6 +14,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     float _ReflectionAdditionalRate;
     float _ReflectionRayThickness;
     float _ReflectionRayJitterSize;
+    float _ReflectionFadeMinDistance;
+    float _ReflectionFadeMaxDistance;
 
     float4x4 _ViewMatrix;
     float4x4 _ViewProjectionMatrix;
@@ -175,6 +177,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
             float rayBinaryStep = rayDeltaStep;
             float stepSign = 1.;
+            float3 sampledViewPosition;
 
             for (int j = 0; j < binarySearchNum; j++)
             {
@@ -184,7 +187,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 currentRayInView += rayViewDir * rayBinaryStep;
 
                 float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
-                float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
+                sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
 
                 float dist = sampledViewPosition.z - currentRayInView.z;
                 stepSign = dist > _RayDepthBias ? -1 : 1;
@@ -195,7 +198,14 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             #if UNITY_UV_STARTS_AT_TOP
             rayUV.y = 1. - rayUV.y;
             #endif
-            baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate;
+
+            // 距離に応じてフェードさせる
+            float rayWithSampledPositionDistance = distance(sampledViewPosition, currentRayInView);
+            float distanceFadeRate = (rayWithSampledPositionDistance - _ReflectionFadeMinDistance) / max(_ReflectionFadeMaxDistance - _ReflectionFadeMinDistance, eps);
+            distanceFadeRate = 1. - saturate(distanceFadeRate);
+            distanceFadeRate = distanceFadeRate * distanceFadeRate; // 距離減衰
+
+            baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate * distanceFadeRate;
         }
 
         return lerp(cachedBaseColor, baseColor, _Blend);
