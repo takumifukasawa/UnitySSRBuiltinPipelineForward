@@ -234,7 +234,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
             // sample color with fade factor
 
-            // float fadeFactor = distanceFadeRate * screenEdgeFadeFactorX * screenEdgeFadeFactorY;
+            float fadeFactor = distanceFadeRate * screenEdgeFadeFactorX * screenEdgeFadeFactorY;
             // float fadeFactor = 1.;
             baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * fadeFactor * _ReflectionAdditionalRate;
         }
