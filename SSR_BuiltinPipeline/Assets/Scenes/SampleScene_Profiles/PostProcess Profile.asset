@@ -21,16 +21,19 @@ MonoBehaviour:
     value: 1
   RayDepthBias:
     overrideState: 1
-    value: 0.01
+    value: 0.0144
   RayMaxDistance:
     overrideState: 1
-    value: 0.5
+    value: 1.6
   ReflectionAdditionalRate:
     overrideState: 1
-    value: 0.53
+    value: 0.179
   ReflectionRayThickness:
     overrideState: 1
-    value: 7.9
+    value: 6.4
+  ReflectionRayJitterSize:
+    overrideState: 1
+    value: 2.08
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

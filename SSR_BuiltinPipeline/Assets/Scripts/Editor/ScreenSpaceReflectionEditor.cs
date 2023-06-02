@@ -8,6 +8,7 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
     SerializedParameterOverride m_RayMaxDistance;
     SerializedParameterOverride m_ReflectionAdditionalRate;
     SerializedParameterOverride m_ReflectionRayThickness;
+    SerializedParameterOverride m_ReflectionRayJitterSize;
 
     public override void OnEnable()
     {
@@ -16,6 +17,7 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         m_RayMaxDistance = FindParameterOverride(x => x.RayMaxDistance);
         m_ReflectionAdditionalRate = FindParameterOverride(x => x.ReflectionAdditionalRate);
         m_ReflectionRayThickness = FindParameterOverride(x => x.ReflectionRayThickness);
+        m_ReflectionRayJitterSize = FindParameterOverride(x => x.ReflectionRayJitterSize);
     }
 
     public override void OnInspectorGUI()
@@ -25,5 +27,6 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         PropertyField(m_RayMaxDistance);
         PropertyField(m_ReflectionAdditionalRate);
         PropertyField(m_ReflectionRayThickness);
+        PropertyField(m_ReflectionRayJitterSize);
     }
 }

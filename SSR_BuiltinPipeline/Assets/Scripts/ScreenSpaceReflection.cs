@@ -27,6 +27,10 @@ public sealed class ScreenSpaceReflection : PostProcessEffectSettings
     [FormerlySerializedAs("reflection ray thickness")]
     [Range(0f, 10f), Tooltip("reflection ray thickness")]
     public FloatParameter ReflectionRayThickness = new FloatParameter { value = 1f };
+    
+    [FormerlySerializedAs("reflection ray jitter size")]
+    [Range(0f, 10f), Tooltip("reflection ray jitter size")]
+    public FloatParameter ReflectionRayJitterSize = new FloatParameter { value = 1f };
 }
 
 public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<ScreenSpaceReflection>
@@ -58,6 +62,7 @@ public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<Sc
         sheet.properties.SetFloat("_RayMaxDistance", settings.RayMaxDistance);
         sheet.properties.SetFloat("_ReflectionAdditionalRate", settings.ReflectionAdditionalRate);
         sheet.properties.SetFloat("_ReflectionRayThickness", settings.ReflectionRayThickness);
+        sheet.properties.SetFloat("_ReflectionRayJitterSize", settings.ReflectionRayJitterSize);
 
         context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
     }
