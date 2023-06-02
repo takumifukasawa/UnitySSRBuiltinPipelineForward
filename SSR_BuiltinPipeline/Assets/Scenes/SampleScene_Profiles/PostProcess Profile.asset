@@ -24,22 +24,34 @@ MonoBehaviour:
     value: 0.0144
   RayMaxDistance:
     overrideState: 1
-    value: 0.7
+    value: 2.89
   ReflectionAdditionalRate:
     overrideState: 1
-    value: 0.746
+    value: 1
   ReflectionRayThickness:
     overrideState: 1
-    value: 6.4
+    value: 5.4
   ReflectionRayJitterSize:
     overrideState: 1
-    value: 0.21
+    value: 0.4
   ReflectionFadeMinDistance:
     overrideState: 1
     value: 0
   ReflectionFadeMaxDistance:
     overrideState: 1
-    value: 1.85
+    value: 50
+  ReflectionScreenEdgeFadeFactorMinX:
+    overrideState: 1
+    value: 0.85
+  ReflectionScreenEdgeFadeFactorMaxX:
+    overrideState: 1
+    value: 1
+  ReflectionScreenEdgeFadeFactorMinY:
+    overrideState: 1
+    value: 0.848
+  ReflectionScreenEdgeFadeFactorMaxY:
+    overrideState: 1
+    value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

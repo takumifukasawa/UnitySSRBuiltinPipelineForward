@@ -16,6 +16,10 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     float _ReflectionRayJitterSize;
     float _ReflectionFadeMinDistance;
     float _ReflectionFadeMaxDistance;
+    float _ReflectionScreenEdgeFadeFactorMinX;
+    float _ReflectionScreenEdgeFadeFactorMaxX;
+    float _ReflectionScreenEdgeFadeFactorMinY;
+    float _ReflectionScreenEdgeFadeFactorMaxY;
 
     float4x4 _ViewMatrix;
     float4x4 _ViewProjectionMatrix;
@@ -145,8 +149,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
         float3 rayViewOrigin = viewPosition;
 
-        int maxIterationNum = 10;
-        int binarySearchNum = 4;
+        int maxIterationNum = 30;
+        int binarySearchNum = 8;
 
         float rayDeltaStep = _RayMaxDistance / (float)maxIterationNum;
 
@@ -161,6 +165,16 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             currentRayInView = rayViewOrigin + rayViewDir * rayDeltaStep * (j + 1 + jitter * _ReflectionRayJitterSize);
             float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
             float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
+
+            float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));
+            currentRayInClip.xyz /= currentRayInClip.w;
+
+            // クリッピング座標の外に出たら棄却
+            // zは一旦考慮しない
+            if(abs(currentRayInClip.x) > 1. || abs(currentRayInClip.y) > 1.)
+            {
+                break;
+            }
 
             float dist = sampledViewPosition.z - currentRayInView.z;
             if (dist > _RayDepthBias && dist < _ReflectionRayThickness)
@@ -199,13 +213,30 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             rayUV.y = 1. - rayUV.y;
             #endif
 
-            // 距離に応じてフェードさせる
-            float rayWithSampledPositionDistance = distance(sampledViewPosition, currentRayInView);
-            float distanceFadeRate = (rayWithSampledPositionDistance - _ReflectionFadeMinDistance) / max(_ReflectionFadeMaxDistance - _ReflectionFadeMinDistance, eps);
-            distanceFadeRate = 1. - saturate(distanceFadeRate);
-            distanceFadeRate = distanceFadeRate * distanceFadeRate; // 距離減衰
+            // screen edge fade
+            
+            float screenEdgeFadeFactorX = (abs(currentRayInClip.x / currentRayInClip.w) - _ReflectionScreenEdgeFadeFactorMinX) / max(_ReflectionScreenEdgeFadeFactorMaxX - _ReflectionScreenEdgeFadeFactorMinX, eps);
+            float screenEdgeFadeFactorY = (abs(currentRayInClip.y / currentRayInClip.w) - _ReflectionScreenEdgeFadeFactorMinY) / max(_ReflectionScreenEdgeFadeFactorMaxY - _ReflectionScreenEdgeFadeFactorMinY, eps);
 
-            baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * _ReflectionAdditionalRate * distanceFadeRate;
+            screenEdgeFadeFactorX = saturate(screenEdgeFadeFactorX);
+            screenEdgeFadeFactorY = saturate(screenEdgeFadeFactorY);
+
+            screenEdgeFadeFactorX = 1. - screenEdgeFadeFactorX * screenEdgeFadeFactorX;
+            screenEdgeFadeFactorY = 1. - screenEdgeFadeFactorY * screenEdgeFadeFactorY;
+
+            // 反射地点とサンプル先の距離でフェード
+
+            float rayWithSampledPositionDistance = distance(viewPosition, sampledViewPosition);
+            float distanceFadeRate = (rayWithSampledPositionDistance - _ReflectionFadeMinDistance) / max(
+                _ReflectionFadeMaxDistance - _ReflectionFadeMinDistance, eps);
+            distanceFadeRate = saturate(distanceFadeRate);
+            distanceFadeRate = 1. - distanceFadeRate * distanceFadeRate; // 距離減衰
+
+            // sample color with fade factor
+
+            // float fadeFactor = distanceFadeRate * screenEdgeFadeFactorX * screenEdgeFadeFactorY;
+            // float fadeFactor = 1.;
+            baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * fadeFactor * _ReflectionAdditionalRate;
         }
 
         return lerp(cachedBaseColor, baseColor, _Blend);

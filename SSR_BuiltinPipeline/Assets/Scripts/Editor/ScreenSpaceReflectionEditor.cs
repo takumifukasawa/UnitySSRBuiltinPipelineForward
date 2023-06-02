@@ -11,6 +11,10 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
     SerializedParameterOverride m_ReflectionRayJitterSize;
     SerializedParameterOverride m_ReflectionFadeMinDistance;
     SerializedParameterOverride m_ReflectionFadeMaxDistance;
+    SerializedParameterOverride m_ReflectionScreenEdgeFadeFactorMinX;
+    SerializedParameterOverride m_ReflectionScreenEdgeFadeFactorMaxX;
+    SerializedParameterOverride m_ReflectionScreenEdgeFadeFactorMinY;
+    SerializedParameterOverride m_ReflectionScreenEdgeFadeFactorMaxY;
 
     public override void OnEnable()
     {
@@ -22,6 +26,10 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         m_ReflectionRayJitterSize = FindParameterOverride(x => x.ReflectionRayJitterSize);
         m_ReflectionFadeMinDistance = FindParameterOverride(x => x.ReflectionFadeMinDistance);
         m_ReflectionFadeMaxDistance = FindParameterOverride(x => x.ReflectionFadeMaxDistance);
+        m_ReflectionScreenEdgeFadeFactorMinX = FindParameterOverride(x => x.ReflectionScreenEdgeFadeFactorMinX);
+        m_ReflectionScreenEdgeFadeFactorMaxX = FindParameterOverride(x => x.ReflectionScreenEdgeFadeFactorMaxX);
+        m_ReflectionScreenEdgeFadeFactorMinY = FindParameterOverride(x => x.ReflectionScreenEdgeFadeFactorMinY);
+        m_ReflectionScreenEdgeFadeFactorMaxY = FindParameterOverride(x => x.ReflectionScreenEdgeFadeFactorMaxY);
     }
 
     public override void OnInspectorGUI()
@@ -34,5 +42,9 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         PropertyField(m_ReflectionRayJitterSize);
         PropertyField(m_ReflectionFadeMinDistance);
         PropertyField(m_ReflectionFadeMaxDistance);
+        PropertyField(m_ReflectionScreenEdgeFadeFactorMinX);
+        PropertyField(m_ReflectionScreenEdgeFadeFactorMaxX);
+        PropertyField(m_ReflectionScreenEdgeFadeFactorMinY);
+        PropertyField(m_ReflectionScreenEdgeFadeFactorMaxY);
     }
 }

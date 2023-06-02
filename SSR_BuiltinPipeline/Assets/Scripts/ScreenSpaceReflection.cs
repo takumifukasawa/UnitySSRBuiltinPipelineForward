@@ -25,7 +25,7 @@ public sealed class ScreenSpaceReflection : PostProcessEffectSettings
     public FloatParameter ReflectionAdditionalRate = new FloatParameter { value = 0.5f };
 
     [FormerlySerializedAs("reflection ray thickness")]
-    [Range(0f, 10f), Tooltip("reflection ray thickness")]
+    [Range(0f, 50f), Tooltip("reflection ray thickness")]
     public FloatParameter ReflectionRayThickness = new FloatParameter { value = 1f };
     
     [FormerlySerializedAs("reflection ray jitter size")]
@@ -33,12 +33,28 @@ public sealed class ScreenSpaceReflection : PostProcessEffectSettings
     public FloatParameter ReflectionRayJitterSize = new FloatParameter { value = 1f };
     
     [FormerlySerializedAs("reflection fade min distance")]
-    [Range(0f, 10f), Tooltip("reflection fade min distance")]
+    [Range(0f, 50f), Tooltip("reflection fade min distance")]
     public FloatParameter ReflectionFadeMinDistance = new FloatParameter { value = 1f };
     
     [FormerlySerializedAs("reflection fade max distance")]
-    [Range(0f, 20f), Tooltip("reflection fade max distance")]
+    [Range(0f, 50f), Tooltip("reflection fade max distance")]
     public FloatParameter ReflectionFadeMaxDistance = new FloatParameter { value = 2f };
+    
+    [FormerlySerializedAs("reflection screen edge fade factor min x")]
+    [Range(0f, 1f), Tooltip("reflection screen edge fade factor min x")]
+    public FloatParameter ReflectionScreenEdgeFadeFactorMinX = new FloatParameter { value = 0.9f };
+    
+    [FormerlySerializedAs("reflection screen edge fade factor max x")]
+    [Range(0f, 1f), Tooltip("reflection screen edge fade factor max x")]
+    public FloatParameter ReflectionScreenEdgeFadeFactorMaxX = new FloatParameter { value = 1f };
+    
+    [FormerlySerializedAs("reflection screen edge fade factor min y")]
+    [Range(0f, 1f), Tooltip("reflection screen edge fade factor min y")]
+    public FloatParameter ReflectionScreenEdgeFadeFactorMinY = new FloatParameter { value = 0.9f };
+    
+    [FormerlySerializedAs("reflection screen edge fade factor max y")]
+    [Range(0f, 1f), Tooltip("reflection screen edge fade factor max y")]
+    public FloatParameter ReflectionScreenEdgeFadeFactorMaxY = new FloatParameter { value = 1f };
 }
 
 public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<ScreenSpaceReflection>
@@ -73,6 +89,10 @@ public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<Sc
         sheet.properties.SetFloat("_ReflectionRayJitterSize", settings.ReflectionRayJitterSize);
         sheet.properties.SetFloat("_ReflectionFadeMinDistance", settings.ReflectionFadeMinDistance);
         sheet.properties.SetFloat("_ReflectionFadeMaxDistance", settings.ReflectionFadeMaxDistance);
+        sheet.properties.SetFloat("_ReflectionScreenEdgeFadeFactorMinX", settings.ReflectionScreenEdgeFadeFactorMinX);
+        sheet.properties.SetFloat("_ReflectionScreenEdgeFadeFactorMaxX", settings.ReflectionScreenEdgeFadeFactorMaxX);
+        sheet.properties.SetFloat("_ReflectionScreenEdgeFadeFactorMinY", settings.ReflectionScreenEdgeFadeFactorMinY);
+        sheet.properties.SetFloat("_ReflectionScreenEdgeFadeFactorMaxY", settings.ReflectionScreenEdgeFadeFactorMaxY);
 
         context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
     }
