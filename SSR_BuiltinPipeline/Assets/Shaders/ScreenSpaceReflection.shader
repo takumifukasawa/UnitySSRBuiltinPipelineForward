@@ -128,6 +128,9 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     {
         float eps = .0001;
 
+        int maxIterationNum = 20;
+        int binarySearchNum = 8;
+
         float4 baseColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
         float4 cachedBaseColor = baseColor;
 
@@ -148,9 +151,6 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float3 rayViewDir = reflectViewDir;
 
         float3 rayViewOrigin = viewPosition;
-
-        int maxIterationNum = 30;
-        int binarySearchNum = 0;
 
         float rayDeltaStep = _RayMaxDistance / (float)maxIterationNum;
 
