@@ -150,7 +150,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
         float3 rayViewOrigin = viewPosition;
 
         int maxIterationNum = 30;
-        int binarySearchNum = 8;
+        int binarySearchNum = 0;
 
         float rayDeltaStep = _RayMaxDistance / (float)maxIterationNum;
 
@@ -191,7 +191,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
             float rayBinaryStep = rayDeltaStep;
             float stepSign = 1.;
-            float3 sampledViewPosition;
+            float3 sampledViewPosition = viewPosition;
 
             for (int j = 0; j < binarySearchNum; j++)
             {
@@ -215,8 +215,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
             // screen edge fade
             
-            float screenEdgeFadeFactorX = (abs(currentRayInClip.x / currentRayInClip.w) - _ReflectionScreenEdgeFadeFactorMinX) / max(_ReflectionScreenEdgeFadeFactorMaxX - _ReflectionScreenEdgeFadeFactorMinX, eps);
-            float screenEdgeFadeFactorY = (abs(currentRayInClip.y / currentRayInClip.w) - _ReflectionScreenEdgeFadeFactorMinY) / max(_ReflectionScreenEdgeFadeFactorMaxY - _ReflectionScreenEdgeFadeFactorMinY, eps);
+            float screenEdgeFadeFactorX = (abs(i.texcoord.x * 2. - 1.) - _ReflectionScreenEdgeFadeFactorMinX) / max(_ReflectionScreenEdgeFadeFactorMaxX - _ReflectionScreenEdgeFadeFactorMinX, eps);
+            float screenEdgeFadeFactorY = (abs(i.texcoord.y * 2. - 1.) - _ReflectionScreenEdgeFadeFactorMinY) / max(_ReflectionScreenEdgeFadeFactorMaxY - _ReflectionScreenEdgeFadeFactorMinY, eps);
 
             screenEdgeFadeFactorX = saturate(screenEdgeFadeFactorX);
             screenEdgeFadeFactorY = saturate(screenEdgeFadeFactorY);
@@ -235,7 +235,6 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             // sample color with fade factor
 
             float fadeFactor = distanceFadeRate * screenEdgeFadeFactorX * screenEdgeFadeFactorY;
-            // float fadeFactor = 1.;
             baseColor += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, rayUV) * fadeFactor * _ReflectionAdditionalRate;
         }
 

@@ -33,22 +33,22 @@ MonoBehaviour:
     value: 5.4
   ReflectionRayJitterSize:
     overrideState: 1
-    value: 0.4
+    value: 0
   ReflectionFadeMinDistance:
     overrideState: 1
     value: 0
   ReflectionFadeMaxDistance:
     overrideState: 1
-    value: 50
+    value: 1.3
   ReflectionScreenEdgeFadeFactorMinX:
     overrideState: 1
-    value: 0.85
+    value: 0.809
   ReflectionScreenEdgeFadeFactorMaxX:
     overrideState: 1
     value: 1
   ReflectionScreenEdgeFadeFactorMinY:
     overrideState: 1
-    value: 0.848
+    value: 0.807
   ReflectionScreenEdgeFadeFactorMaxY:
     overrideState: 1
     value: 1
