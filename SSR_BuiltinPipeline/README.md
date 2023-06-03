@@ -11,3 +11,5 @@
 [https://hanecci.hatenadiary.org/entry/20140617/p8](https://hanecci.hatenadiary.org/entry/20140617/p8)
 
 [https://i-saint.hatenablog.com/entry/2014/12/05/174706](https://i-saint.hatenablog.com/entry/2014/12/05/174706)
+
+[https://jcgt.org/published/0003/04/04/paper-lowres.pdf](https://jcgt.org/published/0003/04/04/paper-lowres.pdf)

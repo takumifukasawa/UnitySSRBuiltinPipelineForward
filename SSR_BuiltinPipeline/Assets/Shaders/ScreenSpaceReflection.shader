@@ -10,6 +10,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
     float _Blend;
     float _RayDepthBias;
+    float _RayNearestDistance;
     float _RayMaxDistance;
     float _ReflectionAdditionalRate;
     float _ReflectionRayThickness;
@@ -162,7 +163,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
         for (int j = 0; j < maxIterationNum; j++)
         {
-            currentRayInView = rayViewOrigin + rayViewDir * rayDeltaStep * (j + 1 + jitter * _ReflectionRayJitterSize);
+            float stepLength = rayDeltaStep * (j + 1 + jitter * _ReflectionRayJitterSize) + _RayNearestDistance;
+            currentRayInView = rayViewOrigin + rayViewDir * stepLength;
             float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
             float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
 
@@ -177,7 +179,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
             }
 
             float dist = sampledViewPosition.z - currentRayInView.z;
-            if (dist > _RayDepthBias && dist < _ReflectionRayThickness)
+            if (_RayDepthBias < dist && dist < _ReflectionRayThickness)
             {
                 isHit = true;
                 break;
@@ -204,7 +206,7 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
                 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
 
                 float dist = sampledViewPosition.z - currentRayInView.z;
-                stepSign = dist > _RayDepthBias ? -1 : 1;
+                stepSign = _RayDepthBias < dist ? -1 : 1;
             }
 
             float4 currentRayInClip = mul(_ProjectionMatrix, float4(currentRayInView, 1.));

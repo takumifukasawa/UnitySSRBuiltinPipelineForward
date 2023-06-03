@@ -15,6 +15,10 @@ public sealed class ScreenSpaceReflection : PostProcessEffectSettings
     [FormerlySerializedAs("ray depth bias")]
     [Range(0f, 0.1f), Tooltip("ray depth bias")]
     public FloatParameter RayDepthBias = new FloatParameter { value = 0.001f };
+    
+    [FormerlySerializedAs("ray nearest distance")]
+    [Range(0f, 5f), Tooltip("ray nearest distance")]
+    public FloatParameter RayNearestDistance = new FloatParameter { value = 0.1f };
 
     [FormerlySerializedAs("ray max distance")]
     [Range(0f, 20f), Tooltip("ray max distance")]
@@ -83,6 +87,7 @@ public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<Sc
         sheet.properties.SetMatrix("_InverseViewMatrix", inverseViewMatrix);
 
         sheet.properties.SetFloat("_RayDepthBias", settings.RayDepthBias);
+        sheet.properties.SetFloat("_RayNearestDistance", settings.RayNearestDistance);
         sheet.properties.SetFloat("_RayMaxDistance", settings.RayMaxDistance);
         sheet.properties.SetFloat("_ReflectionAdditionalRate", settings.ReflectionAdditionalRate);
         sheet.properties.SetFloat("_ReflectionRayThickness", settings.ReflectionRayThickness);

@@ -5,6 +5,7 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
 {
     SerializedParameterOverride m_Blend;
     SerializedParameterOverride m_RayDepthBias;
+    private SerializedParameterOverride m_RayNearestDistance;
     SerializedParameterOverride m_RayMaxDistance;
     SerializedParameterOverride m_ReflectionAdditionalRate;
     SerializedParameterOverride m_ReflectionRayThickness;
@@ -20,6 +21,7 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
     {
         m_Blend = FindParameterOverride(x => x.Blend);
         m_RayDepthBias = FindParameterOverride(x => x.RayDepthBias);
+        m_RayNearestDistance = FindParameterOverride(x => x.RayNearestDistance);
         m_RayMaxDistance = FindParameterOverride(x => x.RayMaxDistance);
         m_ReflectionAdditionalRate = FindParameterOverride(x => x.ReflectionAdditionalRate);
         m_ReflectionRayThickness = FindParameterOverride(x => x.ReflectionRayThickness);
@@ -36,6 +38,7 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
     {
         PropertyField(m_Blend);
         PropertyField(m_RayDepthBias);
+        PropertyField(m_RayNearestDistance);
         PropertyField(m_RayMaxDistance);
         PropertyField(m_ReflectionAdditionalRate);
         PropertyField(m_ReflectionRayThickness);

@@ -21,19 +21,22 @@ MonoBehaviour:
     value: 1
   RayDepthBias:
     overrideState: 1
-    value: 0.0039
+    value: 0.0099
+  RayNearestDistance:
+    overrideState: 1
+    value: 0.2
   RayMaxDistance:
     overrideState: 1
-    value: 5.43
+    value: 3.71
   ReflectionAdditionalRate:
     overrideState: 1
     value: 0.335
   ReflectionRayThickness:
     overrideState: 1
-    value: 0.7
+    value: 0.1
   ReflectionRayJitterSize:
     overrideState: 1
-    value: 1.78
+    value: 1.33
   ReflectionFadeMinDistance:
     overrideState: 1
     value: 0
