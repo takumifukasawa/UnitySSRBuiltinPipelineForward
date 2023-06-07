@@ -33,7 +33,7 @@ MonoBehaviour:
     value: 0.335
   ReflectionRayThickness:
     overrideState: 1
-    value: 0.7
+    value: 0.5
   ReflectionRayJitterSize:
     overrideState: 1
     value: 2.79
