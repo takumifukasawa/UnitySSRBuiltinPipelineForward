@@ -34,9 +34,12 @@ MonoBehaviour:
   ReflectionRayThickness:
     overrideState: 1
     value: 0.3
-  ReflectionRayJitterSize:
+  ReflectionRayJitterSizeX:
     overrideState: 1
-    value: 2.79
+    value: 0.05
+  ReflectionRayJitterSizeY:
+    overrideState: 1
+    value: 0.05
   ReflectionFadeMinDistance:
     overrideState: 1
     value: 0

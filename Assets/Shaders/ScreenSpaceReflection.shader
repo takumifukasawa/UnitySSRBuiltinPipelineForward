@@ -14,7 +14,8 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
     float _RayMaxDistance;
     float _ReflectionAdditionalRate;
     float _ReflectionRayThickness;
-    float _ReflectionRayJitterSize;
+    float _ReflectionRayJitterSizeX;
+    float _ReflectionRayJitterSizeY;
     float _ReflectionFadeMinDistance;
     float _ReflectionFadeMaxDistance;
     float _ReflectionScreenEdgeFadeFactorMinX;
@@ -160,12 +161,13 @@ Shader "Hidden/Custom/ScreenSpaceReflection"
 
         bool isHit = false;
 
-        float jitter = noise(i.texcoord + _Time.x);
+        float jitter = noise(i.texcoord + _Time.x) * 2. - 1.;
+        float2 jitterOffset = float2(jitter * _ReflectionRayJitterSizeX, jitter * _ReflectionRayJitterSizeY);
 
         for (int j = 0; j < maxIterationNum; j++)
         {
-            float stepLength = rayDeltaStep * (j + 1 + jitter * _ReflectionRayJitterSize) + _RayNearestDistance;
-            currentRayInView = rayViewOrigin + rayViewDir * stepLength;
+            float stepLength = rayDeltaStep * (j + 1) + _RayNearestDistance;
+            currentRayInView = rayViewOrigin + float3(jitterOffset, 0.) + rayViewDir * stepLength;
             float sampledRawDepth = SampleRawDepthByViewPosition(currentRayInView, float3(0, 0, 0));
             float3 sampledViewPosition = ReconstructViewPositionFromDepth(i.texcoord, sampledRawDepth);
 

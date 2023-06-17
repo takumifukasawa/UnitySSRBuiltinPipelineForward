@@ -32,9 +32,13 @@ public sealed class ScreenSpaceReflection : PostProcessEffectSettings
     [Range(0f, 50f), Tooltip("reflection ray thickness")]
     public FloatParameter ReflectionRayThickness = new FloatParameter { value = 1f };
     
-    [FormerlySerializedAs("reflection ray jitter size")]
-    [Range(0f, 10f), Tooltip("reflection ray jitter size")]
-    public FloatParameter ReflectionRayJitterSize = new FloatParameter { value = 1f };
+    [FormerlySerializedAs("reflection ray jitter size x")]
+    [Range(0f, 10f), Tooltip("reflection ray jitter size x")]
+    public FloatParameter ReflectionRayJitterSizeX = new FloatParameter { value = 1f };
+    
+    [FormerlySerializedAs("reflection ray jitter size y")]
+    [Range(0f, 10f), Tooltip("reflection ray jitter size y")]
+    public FloatParameter ReflectionRayJitterSizeY = new FloatParameter { value = 1f };
     
     [FormerlySerializedAs("reflection fade min distance")]
     [Range(0f, 50f), Tooltip("reflection fade min distance")]
@@ -91,7 +95,8 @@ public sealed class ScreenSpaceReflectionRenderer : PostProcessEffectRenderer<Sc
         sheet.properties.SetFloat("_RayMaxDistance", settings.RayMaxDistance);
         sheet.properties.SetFloat("_ReflectionAdditionalRate", settings.ReflectionAdditionalRate);
         sheet.properties.SetFloat("_ReflectionRayThickness", settings.ReflectionRayThickness);
-        sheet.properties.SetFloat("_ReflectionRayJitterSize", settings.ReflectionRayJitterSize);
+        sheet.properties.SetFloat("_ReflectionRayJitterSizeX", settings.ReflectionRayJitterSizeX);
+        sheet.properties.SetFloat("_ReflectionRayJitterSizeY", settings.ReflectionRayJitterSizeY);
         sheet.properties.SetFloat("_ReflectionFadeMinDistance", settings.ReflectionFadeMinDistance);
         sheet.properties.SetFloat("_ReflectionFadeMaxDistance", settings.ReflectionFadeMaxDistance);
         sheet.properties.SetFloat("_ReflectionScreenEdgeFadeFactorMinX", settings.ReflectionScreenEdgeFadeFactorMinX);

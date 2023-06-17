@@ -9,7 +9,8 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
     SerializedParameterOverride m_RayMaxDistance;
     SerializedParameterOverride m_ReflectionAdditionalRate;
     SerializedParameterOverride m_ReflectionRayThickness;
-    SerializedParameterOverride m_ReflectionRayJitterSize;
+    SerializedParameterOverride m_ReflectionRayJitterSizeX;
+    SerializedParameterOverride m_ReflectionRayJitterSizeY;
     SerializedParameterOverride m_ReflectionFadeMinDistance;
     SerializedParameterOverride m_ReflectionFadeMaxDistance;
     SerializedParameterOverride m_ReflectionScreenEdgeFadeFactorMinX;
@@ -25,7 +26,8 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         m_RayMaxDistance = FindParameterOverride(x => x.RayMaxDistance);
         m_ReflectionAdditionalRate = FindParameterOverride(x => x.ReflectionAdditionalRate);
         m_ReflectionRayThickness = FindParameterOverride(x => x.ReflectionRayThickness);
-        m_ReflectionRayJitterSize = FindParameterOverride(x => x.ReflectionRayJitterSize);
+        m_ReflectionRayJitterSizeX = FindParameterOverride(x => x.ReflectionRayJitterSizeX);
+        m_ReflectionRayJitterSizeY = FindParameterOverride(x => x.ReflectionRayJitterSizeY);
         m_ReflectionFadeMinDistance = FindParameterOverride(x => x.ReflectionFadeMinDistance);
         m_ReflectionFadeMaxDistance = FindParameterOverride(x => x.ReflectionFadeMaxDistance);
         m_ReflectionScreenEdgeFadeFactorMinX = FindParameterOverride(x => x.ReflectionScreenEdgeFadeFactorMinX);
@@ -42,7 +44,8 @@ public sealed class ScreenSpaceReflectionEditor : PostProcessEffectEditor<Screen
         PropertyField(m_RayMaxDistance);
         PropertyField(m_ReflectionAdditionalRate);
         PropertyField(m_ReflectionRayThickness);
-        PropertyField(m_ReflectionRayJitterSize);
+        PropertyField(m_ReflectionRayJitterSizeX);
+        PropertyField(m_ReflectionRayJitterSizeY);
         PropertyField(m_ReflectionFadeMinDistance);
         PropertyField(m_ReflectionFadeMaxDistance);
         PropertyField(m_ReflectionScreenEdgeFadeFactorMinX);
